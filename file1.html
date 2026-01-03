@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Recipe Journal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-cream: #F7F3EB;
+            --color-warm-white: #FFFDF9;
+            --color-terracotta: #C4704F;
+            --color-terracotta-dark: #A85A3A;
+            --color-olive: #5C6B4A;
+            --color-olive-light: #7A8B68;
+            --color-charcoal: #2D2926;
+            --color-warm-gray: #6B635C;
+            --color-gold: #D4A853;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Lora', Georgia, serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-cream);
+            color: var(--color-charcoal);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(247, 243, 235, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.25rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(45, 41, 38, 0.08);
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.9rem 5%;
+            box-shadow: 0 4px 30px rgba(45, 41, 38, 0.06);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--color-charcoal);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--color-terracotta);
+            font-style: italic;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--color-warm-gray);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-terracotta);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-charcoal);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 5% 4rem;
+            background: var(--color-warm-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 70%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(196, 112, 79, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 6rem;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-terracotta);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .hero-tag::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 2rem;
+            height: 1px;
+            background: var(--color-terracotta);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.8rem, 5vw, 4.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--color-charcoal);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--color-terracotta);
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--color-warm-gray);
+            max-width: 480px;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 2.2rem;
+            background: var(--color-charcoal);
+            color: var(--color-cream);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.02em;
+        }
+
+        .hero-btn:hover {
+            background: var(--color-terracotta);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(196, 112, 79, 0.3);
+        }
+
+        .hero-btn svg {
+            transition: transform 0.3s ease;
+        }
+
+        .hero-btn:hover svg {
+            transform: translateX(4px);
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+        }
+
+        .hero-image-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--color-terracotta);
+            border-radius: 300px 300px 20px 20px;
+            opacity: 0.3;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 300px 300px 20px 20px;
+            box-shadow: 0 30px 80px rgba(45, 41, 38, 0.15);
+        }
+
+        .recipes {
+            padding: 8rem 5%;
+            background: var(--color-cream);
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 5rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-olive);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
+            font-weight: 400;
+            color: var(--color-charcoal);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--color-warm-gray);
+            font-size: 1.05rem;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .recipe-card {
+            background: var(--color-warm-white);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(45, 41, 38, 0.04);
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(45, 41, 38, 0.12);
+        }
+
+        .recipe-image-container {
+            position: relative;
+            overflow: hidden;
+            height: 280px;
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .recipe-card:hover .recipe-image {
+            transform: scale(1.08);
+        }
+
+        .recipe-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(45, 41, 38, 0.7), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .recipe-card:hover .recipe-overlay {
+            opacity: 1;
+        }
+
+        .recipe-quick-view {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--color-warm-white);
+            color: var(--color-charcoal);
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .recipe-card:hover .recipe-quick-view {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .recipe-content {
+            padding: 1.8rem;
+        }
+
+        .recipe-category {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-terracotta);
+            margin-bottom: 0.8rem;
+        }
+
+        .recipe-title {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            color: var(--color-charcoal);
+            margin-bottom: 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .recipe-card:hover .recipe-title {
+            color: var(--color-terracotta);
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--color-warm-gray);
+        }
+
+        .recipe-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(45, 41, 38, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--color-warm-white);
+            border-radius: 24px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            background: var(--color-warm-white);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(45, 41, 38, 0.1);
+        }
+
+        .modal-close:hover {
+            background: var(--color-terracotta);
+            color: white;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+
+        .modal-content {
+            padding: 2.5rem;
+        }
+
+        .modal-category {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-terracotta);
+            margin-bottom: 0.8rem;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            color: var(--color-charcoal);
+            margin-bottom: 1rem;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(45, 41, 38, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-meta-item {
+            text-align: center;
+        }
+
+        .modal-meta-value {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--color-charcoal);
+        }
+
+        .modal-meta-label {
+            font-size: 0.8rem;
+            color: var(--color-warm-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .modal-description {
+            color: var(--color-warm-gray);
+            margin-bottom: 2rem;
+        }
+
+        .modal-section-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--color-charcoal);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .modal-section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--color-terracotta);
+            border-radius: 2px;
+        }
+
+        .ingredients-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .ingredients-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px dashed rgba(45, 41, 38, 0.1);
+            color: var(--color-warm-gray);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .ingredients-list li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--color-olive);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .instructions-list {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .instructions-list li {
+            padding: 1rem 0 1rem 3rem;
+            position: relative;
+            color: var(--color-warm-gray);
+            border-bottom: 1px solid rgba(45, 41, 38, 0.06);
+        }
+
+        .instructions-list li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 1rem;
+            width: 28px;
+            height: 28px;
+            background: var(--color-olive);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .about {
+            padding: 8rem 5%;
+            background: var(--color-warm-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(92, 107, 74, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .about-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 6rem;
+            align-items: center;
+        }
+
+        .about-image-wrapper {
+            position: relative;
+        }
+
+        .about-image-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 100%;
+            height: 100%;
+            background: var(--color-olive);
+            border-radius: 20px;
+            opacity: 0.15;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 550px;
+            object-fit: cover;
+            border-radius: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .about-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-olive);
+            margin-bottom: 1rem;
+        }
+
+        .about-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 400;
+            color: var(--color-charcoal);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .about-text {
+            color: var(--color-warm-gray);
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-signature {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-style: italic;
+            color: var(--color-terracotta);
+            margin-top: 2rem;
+        }
+
+        .footer {
+            background: var(--color-charcoal);
+            color: var(--color-cream);
+            padding: 5rem 5% 2rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid rgba(247, 243, 235, 0.1);
+        }
+
+        .footer-brand .logo {
+            color: var(--color-cream);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .footer-description {
+            color: rgba(247, 243, 235, 0.6);
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+
+        .footer-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-cream);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(247, 243, 235, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-terracotta);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(247, 243, 235, 0.4);
+            font-size: 0.85rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(247, 243, 235, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-cream);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--color-terracotta);
+            border-color: var(--color-terracotta);
+        }
+
+        @media (max-width: 1024px) {
+
+            .hero-container,
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .hero-image {
+                height: 450px;
+            }
+
+            .about-image {
+                height: 400px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="#" class="logo">Savory <span>Stories</span></a>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#recipes">Recipes</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#footer">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <span class="hero-tag">Welcome to our kitchen</span>
+                <h1 class="hero-title">Recipes crafted with <em>love</em> & tradition</h1>
+                <p class="hero-description">Discover a curated collection of homemade recipes passed down through
+                    generations, each dish telling its own delicious story.</p>
+                <a href="#recipes" class="hero-btn">
+                    Explore Recipes
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+            <div class="hero-image-wrapper">
+                <img src="https://images.pexels.com/photos/4108278/pexels-photo-4108278.jpeg"
+                    alt="Delicious home cooking" class="hero-image">
+
+            </div>
+        </div>
+    </section>
+
+    <section class="recipes" id="recipes">
+        <div class="section-header">
+            <span class="section-tag">Our Collection</span>
+            <h2 class="section-title">Featured Recipes</h2>
+            <p class="section-subtitle">Hand-picked favorites from our kitchen to yours, each tested and perfected for
+                your table.</p>
+        </div>
+        <div class="recipes-grid">
+
+            <article class="recipe-card" onclick="openModal(0)">
+                <div class="recipe-image-container">
+                    <img src="https://images.pexels.com/photos/11136871/pexels-photo-11136871.jpeg"
+                        alt="Rustic Sourdough Bread" class="recipe-image">
+                    <div class="recipe-overlay"></div>
+                    <span class="recipe-quick-view">View Recipe</span>
+                </div>
+                <div class="recipe-content">
+                    <span class="recipe-category">Bakery</span>
+                    <h3 class="recipe-title">Rustic Sourdough Bread</h3>
+                    <div class="recipe-meta">
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            45 min
+                        </span>
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                            6 servings
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+
+            <article class="recipe-card" onclick="openModal(1)">
+                <div class="recipe-image-container">
+                    <img src="https://images.pexels.com/photos/8805075/pexels-photo-8805075.jpeg"
+                        alt="Creamy Mushroom Pasta" class="recipe-image">
+                    <div class="recipe-overlay"></div>
+                    <span class="recipe-quick-view">View Recipe</span>
+                </div>
+                <div class="recipe-content">
+                    <span class="recipe-category">Pasta</span>
+                    <h3 class="recipe-title">Creamy Mushroom Pasta</h3>
+                    <div class="recipe-meta">
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            30 min
+                        </span>
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                            4 servings
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+
+            <article class="recipe-card" onclick="openModal(2)">
+                <div class="recipe-image-container">
+                    <img src="https://images.pexels.com/photos/9371644/pexels-photo-9371644.jpeg"
+                        alt="Mediterranean Salad Bowl" class="recipe-image">
+                    <div class="recipe-overlay"></div>
+                    <span class="recipe-quick-view">View Recipe</span>
+                </div>
+                <div class="recipe-content">
+                    <span class="recipe-category">Salads</span>
+                    <h3 class="recipe-title">Mediterranean Salad Bowl</h3>
+                    <div class="recipe-meta">
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            15 min
+                        </span>
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                            2 servings
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+
+            <article class="recipe-card" onclick="openModal(3)">
+                <div class="recipe-image-container">
+                    <img src="https://images.pexels.com/photos/4253124/pexels-photo-4253124.jpeg"
+                        alt="Classic Berry Pancakes" class="recipe-image">
+                    <div class="recipe-overlay"></div>
+                    <span class="recipe-quick-view">View Recipe</span>
+                </div>
+                <div class="recipe-content">
+                    <span class="recipe-category">Breakfast</span>
+                    <h3 class="recipe-title">Classic Berry Pancakes</h3>
+                    <div class="recipe-meta">
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            25 min
+                        </span>
+                        <span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                            4 servings
+                        </span>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+
+    <section class="about" id="about">
+        <div class="about-container">
+            <div class="about-image-wrapper">
+                <img src="https://images.pexels.com/photos/4108278/pexels-photo-4108278.jpeg" alt="Our kitchen story"
+                    class="about-image">
+            </div>
+            <div class="about-content">
+                <span class="about-tag">Our Story</span>
+                <h2 class="about-title">Where every recipe becomes a cherished memory</h2>
+                <p class="about-text">Welcome to Savory Stories, a culinary haven born from generations of family
+                    recipes and a deep passion for authentic home cooking. What started as handwritten notes tucked away
+                    in grandmother's wooden recipe box has blossomed into this digital kitchen where we share our most
+                    treasured dishes with you.</p>
+                <p class="about-text">Each recipe here has been lovingly tested, refined, and perfected in our own
+                    kitchen. We believe that cooking is more than just preparing food—it's about creating moments,
+                    building traditions, and nourishing both body and soul. From rustic breads that fill your home with
+                    irresistible aromas to comfort dishes that warm the coldest evenings, every recipe tells a story.
+                </p>
+                <p class="about-text">Join us on this delicious journey. Whether you're a seasoned chef or just
+                    beginning your culinary adventure, there's always a place for you at our table.</p>
+                <div class="about-signature">— The Savory Stories Team</div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footer" id="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="#" class="logo">Savory <span>Stories</span></a>
+                <p class="footer-description">Bringing the warmth of home cooking to kitchens around the world, one
+                    recipe at a time.</p>
+            </div>
+            <div class="footer-column">
+                <h4 class="footer-title">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#recipes">Recipes</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4 class="footer-title">Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Breakfast</a></li>
+                    <li><a href="#">Main Dishes</a></li>
+                    <li><a href="#">Desserts</a></li>
+                    <li><a href="#">Bakery</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4 class="footer-title">Connect</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Newsletter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Pinterest</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Savory Stories. Made with love.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Instagram">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                    </svg>
+                </a>
+                <a href="#" aria-label="Pinterest">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 12a4 4 0 1 0 8 0c0-2-1-4-4-4s-4 2-4 4z" />
+                        <path d="M12 16v6" />
+                        <circle cx="12" cy="12" r="10" />
+                    </svg>
+                </a>
+                <a href="#" aria-label="YouTube">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
+                        <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <img src="" alt="" class="modal-image" id="modalImage">
+            <div class="modal-content">
+                <span class="modal-category" id="modalCategory"></span>
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <div class="modal-meta">
+                    <div class="modal-meta-item">
+                        <div class="modal-meta-value" id="modalTime"></div>
+                        <div class="modal-meta-label">Cook Time</div>
+                    </div>
+                    <div class="modal-meta-item">
+                        <div class="modal-meta-value" id="modalServings"></div>
+                        <div class="modal-meta-label">Servings</div>
+                    </div>
+                    <div class="modal-meta-item">
+                        <div class="modal-meta-value" id="modalDifficulty"></div>
+                        <div class="modal-meta-label">Difficulty</div>
+                    </div>
+                </div>
+                <p class="modal-description" id="modalDescription"></p>
+                <h3 class="modal-section-title">Ingredients</h3>
+                <ul class="ingredients-list" id="modalIngredients"></ul>
+                <h3 class="modal-section-title">Instructions</h3>
+                <ol class="instructions-list" id="modalInstructions"></ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const recipes = [
+            {
+                title: "Rustic Sourdough Bread",
+                category: "Bakery",
+                image: "https://images.pexels.com/photos/11136871/pexels-photo-11136871.jpeg",
+                time: "45 min",
+                servings: "6",
+                difficulty: "Medium",
+                description: "A beautifully crusty sourdough bread with a soft, tangy interior. This recipe has been perfected over years of baking and yields a loaf that's perfect for sandwiches or simply enjoyed with butter.",
+                ingredients: [
+                    "500g bread flour",
+                    "350ml warm water",
+                    "100g active sourdough starter",
+                    "10g sea salt",
+                    "1 tbsp olive oil",
+                    "Cornmeal for dusting"
+                ],
+                instructions: [
+                    "Mix flour and water in a large bowl. Let rest for 30 minutes (autolyse).",
+                    "Add the sourdough starter and mix until fully incorporated.",
+                    "Add salt and knead for 10 minutes until smooth and elastic.",
+                    "Place in an oiled bowl, cover, and let rise for 4-6 hours until doubled.",
+                    "Shape the dough and place in a proofing basket. Refrigerate overnight.",
+                    "Preheat oven to 450°F (230°C) with a Dutch oven inside.",
+                    "Score the top of the loaf and bake covered for 30 minutes, then uncovered for 15 minutes until golden brown."
+                ]
+            },
+            {
+                title: "Creamy Mushroom Pasta",
+                category: "Pasta",
+                image: "https://images.pexels.com/photos/8805075/pexels-photo-8805075.jpeg",
+                time: "30 min",
+                servings: "4",
+                difficulty: "Easy",
+                description: "A rich and luxurious pasta dish featuring a medley of wild mushrooms in a silky cream sauce. Perfect for a cozy dinner that feels restaurant-worthy but comes together in just 30 minutes.",
+                ingredients: [
+                    "400g fettuccine pasta",
+                    "300g mixed mushrooms (cremini, shiitake, oyster)",
+                    "4 cloves garlic, minced",
+                    "1 cup heavy cream",
+                    "½ cup white wine",
+                    "½ cup parmesan cheese, grated",
+                    "Fresh thyme and parsley",
+                    "Salt and black pepper to taste"
+                ],
+                instructions: [
+                    "Cook pasta according to package directions. Reserve 1 cup pasta water before draining.",
+                    "Slice mushrooms and sauté in butter over high heat until golden, about 5-7 minutes.",
+                    "Add garlic and thyme, cook for 1 minute until fragrant.",
+                    "Pour in white wine and let it reduce by half.",
+                    "Add heavy cream and simmer for 3-4 minutes until slightly thickened.",
+                    "Toss in the cooked pasta with parmesan cheese. Add pasta water as needed for desired consistency.",
+                    "Season with salt and pepper, garnish with fresh parsley and extra parmesan."
+                ]
+            },
+            {
+                title: "Mediterranean Salad Bowl",
+                category: "Salads",
+                image: "https://images.pexels.com/photos/9371644/pexels-photo-9371644.jpeg",
+                time: "15 min",
+                servings: "2",
+                difficulty: "Easy",
+                description: "A vibrant and refreshing salad that captures the essence of Mediterranean cuisine. Packed with fresh vegetables, creamy feta, and a zesty lemon dressing that brings everything together.",
+                ingredients: [
+                    "4 cups mixed greens",
+                    "1 cucumber, diced",
+                    "1 cup cherry tomatoes, halved",
+                    "½ red onion, thinly sliced",
+                    "½ cup kalamata olives",
+                    "150g feta cheese, crumbled",
+                    "¼ cup extra virgin olive oil",
+                    "2 tbsp lemon juice",
+                    "1 tsp dried oregano"
+                ],
+                instructions: [
+                    "Wash and dry all vegetables. Arrange mixed greens as the base in serving bowls.",
+                    "Top with cucumber, cherry tomatoes, red onion, and olives in sections.",
+                    "Crumble feta cheese generously over the top.",
+                    "Whisk together olive oil, lemon juice, oregano, salt, and pepper for the dressing.",
+                    "Drizzle the dressing over the salad just before serving.",
+                    "Serve immediately with crusty bread on the side."
+                ]
+            },
+            {
+                title: "Classic Berry Pancakes",
+                category: "Breakfast",
+                image: "https://images.pexels.com/photos/4253124/pexels-photo-4253124.jpeg",
+                time: "25 min",
+                servings: "4",
+                difficulty: "Easy",
+                description: "Fluffy, golden pancakes studded with fresh berries and drizzled with pure maple syrup. These breakfast favorites are perfect for lazy weekend mornings with family.",
+                ingredients: [
+                    "2 cups all-purpose flour",
+                    "2 tbsp sugar",
+                    "2 tsp baking powder",
+                    "1 tsp baking soda",
+                    "2 cups buttermilk",
+                    "2 eggs",
+                    "4 tbsp melted butter",
+                    "1 cup mixed fresh berries",
+                    "Maple syrup for serving"
+                ],
+                instructions: [
+                    "Whisk together flour, sugar, baking powder, baking soda, and a pinch of salt in a large bowl.",
+                    "In another bowl, combine buttermilk, eggs, and melted butter.",
+                    "Pour wet ingredients into dry and mix until just combined. Don't overmix—some lumps are okay.",
+                    "Heat a non-stick pan or griddle over medium heat. Lightly butter the surface.",
+                    "Pour ¼ cup batter per pancake. Add a few berries to each pancake.",
+                    "Cook until bubbles form on the surface, then flip and cook until golden brown.",
+                    "Serve stacked with extra berries, a pat of butter, and warm maple syrup."
+                ]
+            }
+        ];
+
+
+        function openModal(index) {
+            const recipe = recipes[index];
+            document.getElementById('modalImage').src = recipe.image;
+            document.getElementById('modalImage').alt = recipe.title;
+            document.getElementById('modalCategory').textContent = recipe.category;
+            document.getElementById('modalTitle').textContent = recipe.title;
+            document.getElementById('modalTime').textContent = recipe.time;
+            document.getElementById('modalServings').textContent = recipe.servings;
+            document.getElementById('modalDifficulty').textContent = recipe.difficulty;
+            document.getElementById('modalDescription').textContent = recipe.description;
+
+            const ingredientsList = document.getElementById('modalIngredients');
+            ingredientsList.innerHTML = recipe.ingredients.map(ing => `<li>${ing}</li>`).join('');
+
+            const instructionsList = document.getElementById('modalInstructions');
+            instructionsList.innerHTML = recipe.instructions.map(inst => `<li>${inst}</li>`).join('');
+
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+
+        document.getElementById('modalOverlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+
+</html>
